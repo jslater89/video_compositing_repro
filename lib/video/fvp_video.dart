@@ -24,7 +24,7 @@ Future<void> ensureFvpInitialized() async {
       "platforms": <String>["linux"],
     };
     if (hwdec == "no") {
-      options["video.decoders"] = <String>["FFmpeg:format=rgba"];
+      options["video.decoders"] = <String>["FFmpeg"];
     }
     debugPrint("fvp hwdec: $hwdec");
     fvp.registerWith(options: options);
