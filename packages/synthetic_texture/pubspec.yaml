@@ -1,0 +1,19 @@
+name: synthetic_texture
+description: Minimal FlTextureGL plugin with animated SMPTE color bars for compositing repros.
+publish_to: "none"
+version: 0.1.0
+
+environment:
+  sdk: ^3.11.0
+  flutter: ">=3.16.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  path: ^1.9.1
+
+flutter:
+  plugin:
+    platforms:
+      linux:
+        pluginClass: SyntheticTexturePlugin

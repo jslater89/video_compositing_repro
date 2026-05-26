@@ -1,0 +1,9 @@
+# Flutter build outputs
+/build/
+/.dart_tool/
+
+# Offline RGBA sequence (~750 MiB at 1080p x 90 frames). Regenerate via tool/extract_rgba_frames.sh
+assets/video_rgba.bin
+
+# FVM Version Cache
+.fvm/
