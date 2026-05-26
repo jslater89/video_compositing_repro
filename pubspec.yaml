@@ -15,6 +15,7 @@ dependencies:
   window_manager: ^0.5.1
   synthetic_texture:
     path: packages/synthetic_texture
+  intl: ^0.20.2
 
 dev_dependencies:
   flutter_test:
@@ -26,4 +27,5 @@ flutter:
   assets:
     - assets/video.mp4
     - assets/overlay.png
+    - assets/overlay.jpg
     - assets/video_rgba.bin

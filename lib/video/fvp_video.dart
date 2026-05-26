@@ -4,17 +4,27 @@ import "package:flutter/material.dart";
 import "package:fvp/fvp.dart" as fvp;
 import "package:video_player/video_player.dart";
 
+import 'package:logging/logging.dart';
+import 'package:intl/intl.dart';
+
 import "repro_video.dart";
 
 Future<void> ensureFvpInitialized() async {
   if (Platform.isLinux) {
     // mdk equivalent of hwdec=no: skip VAAPI/CUDA/VDPAU, use software FFmpeg only.
     const String hwdec = String.fromEnvironment("FVP_HWDEC", defaultValue: "no");
+    Logger.root.level = Level.ALL;
+    final df = DateFormat("HH:mm:ss.SSS");
+    Logger.root.onRecord.listen((record) {
+      debugPrint(
+          '${record.loggerName}.${record.level.name}: ${df.format(record.time)}: ${record.message}',
+          wrapWidth: 0x7FFFFFFFFFFFFFFF);
+    });
     final Map<String, Object> options = <String, Object>{
       "platforms": <String>["linux"],
     };
     if (hwdec == "no") {
-      options["video.decoders"] = <String>["FFmpeg"];
+      options["video.decoders"] = <String>["FFmpeg:format=rgba"];
     }
     debugPrint("fvp hwdec: $hwdec");
     fvp.registerWith(options: options);

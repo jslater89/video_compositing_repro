@@ -68,6 +68,7 @@ class ReproScreen extends StatefulWidget {
 class _ReproScreenState extends State<ReproScreen> {
   static const String _videoAsset = "assets/video.mp4";
   static const String _overlayAsset = "assets/overlay.png";
+  static const String _overlayJpgAsset = "assets/overlay.jpg";
 
   ReproVideo? _video;
   String? _initError;
@@ -295,19 +296,21 @@ class _ReproScreenState extends State<ReproScreen> {
       top: 16,
       width: side,
       height: side,
-      child: Image.asset(
-        _overlayAsset,
-        fit: BoxFit.contain,
-        errorBuilder: (BuildContext context, Object error, StackTrace? stack) {
-          return Container(
-            color: Colors.white24,
-            alignment: Alignment.center,
-            child: const Text(
-              "overlay.png?",
-              style: TextStyle(fontSize: 12),
-            ),
-          );
-        },
+      child: RepaintBoundary(
+        child: Image.asset(
+          _overlayAsset,
+          fit: BoxFit.contain,
+          errorBuilder: (BuildContext context, Object error, StackTrace? stack) {
+            return Container(
+              color: Colors.white24,
+              alignment: Alignment.center,
+              child: const Text(
+                "overlay.png?",
+                style: TextStyle(fontSize: 12),
+              ),
+            );
+          },
+        ),
       ),
     );
   }
