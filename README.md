@@ -38,6 +38,7 @@ Backend is selected at **compile time** via `--dart-define=VIDEO_BACKEND=…`. V
 | *(default)* / `fvp` | `video_player` + **fvp** / mdk (`renderVideo()` → FBO texture) | **Yes** |
 | `synthetic` | SMPTE color bars → `FlTextureGL` via `glTexSubImage2D` | No |
 | `synthetic_fbo` | Same bars → FBO color attachment + `glTexSubImage2D` | No |
+| `synthetic_yuv` | SMPTE bars as **planar YUV420** → GLES BT.709 shader → FBO | *(test)* |
 | `offline_rgba` | Pre-decoded RGBA frames from `video.mp4` → `glTexSubImage2D` | No |
 | `offline_rgba_fbo` | Same RGBA frames → FBO attachment + `glTexSubImage2D` | No |
 
@@ -52,6 +53,9 @@ flutter run -d linux --release --dart-define=VIDEO_BACKEND=synthetic
 
 # Synthetic bars, FBO-backed texture
 flutter run -d linux --release --dart-define=VIDEO_BACKEND=synthetic_fbo
+
+# Planar YUV420 SMPTE bars → BT.709 shader → FBO (tests live YUV→RGB path)
+flutter run -d linux --release --dart-define=VIDEO_BACKEND=synthetic_yuv
 
 # Offline RGBA frames (requires extract step below)
 flutter run -d linux --release --dart-define=VIDEO_BACKEND=offline_rgba
@@ -105,6 +109,7 @@ lib/main.dart                          # overlay stack, keyboard toggles
 lib/video/backend.dart                 # VIDEO_BACKEND selection
 lib/video/fvp_video.dart               # FVP + optional FVP_HWDEC
 lib/video/synthetic_video.dart         # synthetic / synthetic_fbo
+lib/video/synthetic_yuv_video.dart     # synthetic_yuv (planar YUV420)
 lib/video/offline_rgba_video.dart      # offline_rgba / offline_rgba_fbo
 lib/compositing_shadow_shim.dart       # blur corner fix
 packages/synthetic_texture/            # local FlTextureGL plugin (bisect)

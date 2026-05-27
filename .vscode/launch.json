@@ -31,6 +31,17 @@
       ]
     },
     {
+      "name": "Linux (synthetic YUV)",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "release",
+      "deviceId": "linux",
+      "toolArgs": [
+        "--dart-define",
+        "VIDEO_BACKEND=synthetic_yuv"
+      ]
+    },
+    {
       "name": "Linux (offline RGBA)",
       "request": "launch",
       "type": "dart",

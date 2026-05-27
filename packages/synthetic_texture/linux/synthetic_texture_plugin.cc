@@ -1,4 +1,5 @@
 #include "include/synthetic_texture/synthetic_texture_plugin.h"
+#include "include/synthetic_texture/yuv_pattern_texture.h"
 
 #include <epoxy/gl.h>
 
@@ -504,6 +505,47 @@ static FlMethodResponse* synthetic_texture_create_from_file(
   return FL_METHOD_RESPONSE(fl_method_success_response_new(result));
 }
 
+static FlMethodResponse* synthetic_texture_create_yuv(SyntheticTexturePlugin* self,
+                                                      FlValue* args) {
+  FlValue* width_value = fl_value_lookup_string(args, "width");
+  FlValue* height_value = fl_value_lookup_string(args, "height");
+  if (width_value == nullptr || height_value == nullptr ||
+      fl_value_get_type(width_value) != FL_VALUE_TYPE_INT ||
+      fl_value_get_type(height_value) != FL_VALUE_TYPE_INT) {
+    return FL_METHOD_RESPONSE(fl_method_error_response_new(
+        "invalid_args", "width and height must be integers", nullptr));
+  }
+
+  const gint width = static_cast<gint>(fl_value_get_int(width_value));
+  const gint height = static_cast<gint>(fl_value_get_int(height_value));
+  if (width <= 0 || height <= 0 || (width % 2) != 0 || (height % 2) != 0) {
+    return FL_METHOD_RESPONSE(fl_method_error_response_new(
+        "invalid_args", "width and height must be positive even integers",
+        nullptr));
+  }
+
+  FlTextureRegistrar* registrar = self->texture_registrar;
+  SyntheticYuvPatternTexture* texture =
+      synthetic_yuv_pattern_texture_new(width, height);
+  if (!fl_texture_registrar_register_texture(registrar,
+                                             FL_TEXTURE(texture))) {
+    g_object_unref(texture);
+    return FL_METHOD_RESPONSE(fl_method_error_response_new(
+        "register_failed", "Failed to register FlTextureGL", nullptr));
+  }
+
+  const int64_t texture_id =
+      static_cast<int64_t>(fl_texture_get_id(FL_TEXTURE(texture)));
+  g_hash_table_insert(self->textures, GINT_TO_POINTER(texture_id), texture);
+
+  g_autoptr(FlValue) result = fl_value_new_map();
+  fl_value_set_string_take(result, "textureId",
+                           fl_value_new_int(texture_id));
+  fl_value_set_string_take(result, "width", fl_value_new_int(width));
+  fl_value_set_string_take(result, "height", fl_value_new_int(height));
+  return FL_METHOD_RESPONSE(fl_method_success_response_new(result));
+}
+
 static FlMethodResponse* synthetic_texture_mark_frame_available(
     SyntheticTexturePlugin* self,
     FlValue* args) {
@@ -562,6 +604,8 @@ static void synthetic_texture_plugin_handle_method_call(
     response = synthetic_texture_create(self, args);
   } else if (g_strcmp0(method, "createFromFile") == 0) {
     response = synthetic_texture_create_from_file(self, args);
+  } else if (g_strcmp0(method, "createYuv") == 0) {
+    response = synthetic_texture_create_yuv(self, args);
   } else if (g_strcmp0(method, "markFrameAvailable") == 0) {
     response = synthetic_texture_mark_frame_available(self, args);
   } else if (g_strcmp0(method, "dispose") == 0) {

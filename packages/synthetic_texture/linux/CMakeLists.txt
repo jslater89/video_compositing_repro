@@ -6,6 +6,7 @@ set(PLUGIN_NAME "synthetic_texture_plugin")
 
 add_library(${PLUGIN_NAME} SHARED
   "synthetic_texture_plugin.cc"
+  "yuv_pattern_texture.cc"
 )
 apply_standard_settings(${PLUGIN_NAME})
 set_target_properties(${PLUGIN_NAME} PROPERTIES

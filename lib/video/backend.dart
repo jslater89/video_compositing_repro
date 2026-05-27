@@ -2,12 +2,14 @@ import "fvp_video.dart";
 import "offline_rgba_video.dart";
 import "repro_video.dart";
 import "synthetic_video.dart";
+import "synthetic_yuv_video.dart";
 
 // Compile-time backend selection via --dart-define:
 //
 //   FVP (default):          flutter run -d linux
 //   synthetic bars:         --dart-define=VIDEO_BACKEND=synthetic
 //   synthetic bars (FBO):   --dart-define=VIDEO_BACKEND=synthetic_fbo
+//   synthetic YUV420 bars:  --dart-define=VIDEO_BACKEND=synthetic_yuv
 //   offline RGBA frames:    --dart-define=VIDEO_BACKEND=offline_rgba
 //   offline RGBA (FBO):     --dart-define=VIDEO_BACKEND=offline_rgba_fbo
 //
@@ -22,11 +24,13 @@ const String videoBackendLabel = _videoBackend == "synthetic"
     ? "synthetic"
     : _videoBackend == "synthetic_fbo"
         ? "synthetic_fbo"
-        : _videoBackend == "offline_rgba"
-            ? "offline_rgba"
-            : _videoBackend == "offline_rgba_fbo"
-                ? "offline_rgba_fbo"
-                : "FVP";
+        : _videoBackend == "synthetic_yuv"
+            ? "synthetic_yuv"
+            : _videoBackend == "offline_rgba"
+                ? "offline_rgba"
+                : _videoBackend == "offline_rgba_fbo"
+                    ? "offline_rgba_fbo"
+                    : "FVP";
 
 Future<void> ensureVideoBackendInitialized() async {
   if (_videoBackend == "fvp") {
@@ -40,6 +44,8 @@ ReproVideo createReproVideo() {
       return SyntheticReproVideo();
     case "synthetic_fbo":
       return SyntheticReproVideo(useFbo: true);
+    case "synthetic_yuv":
+      return SyntheticYuvReproVideo();
     case "offline_rgba":
       return OfflineRgbaReproVideo();
     case "offline_rgba_fbo":
